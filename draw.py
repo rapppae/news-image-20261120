@@ -6,10 +6,14 @@ layout is computed from a small grid instead of hard-coded per element.
 Deterministic: no clock, no randomness, fixed fonts from assets/.
 """
 
+from pathlib import Path
+
 from PIL import Image, ImageDraw, ImageFont
 
 W, H = 1024, 1024
-ASSETS = "assets"
+# Fonts resolve against this file, not the working directory, so the
+# renderer works wherever it is run from.
+ASSETS = Path(__file__).resolve().parent / "assets"
 
 PALETTE = {
     "paper": (245, 240, 225),

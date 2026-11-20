@@ -1,19 +1,21 @@
-"""Entry point: render the poster to entry.png.
+"""Entry point: copy the pre-rendered poster to the output location.
 
-The grader runs `python main.py` and expects exactly one image at
-/output/entry.png. The destination can be overridden with --out, or with the
-MAKEFUN_OUTPUT_DIR environment variable (a plain directory path).
+The grader runs `python3 -P -s /bot/main.py` in a sandbox with no
+network and only the standard library (RULES.txt: "standard library
+only: nothing is installed before it runs"), so this entrypoint does
+not draw anything: it copies the poster PNG that ships in the
+repository to the output path. The destination can be overridden
+with --out, or with the MAKEFUN_OUTPUT_DIR environment variable (a
+plain directory path).
 """
 
 import argparse
 import os
-import sys
+import shutil
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE))
-
-from draw import build_poster
+SOURCE = HERE / "entry.png"
 
 
 def _destination(cli_out):
@@ -26,12 +28,12 @@ def _destination(cli_out):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="Render the 20 Nov 2026 news poster.")
+    parser = argparse.ArgumentParser(description="Copy the 20 Nov 2026 news poster to the output path.")
     parser.add_argument("--out", default=None, help="output PNG path (default: /output/entry.png)")
     args = parser.parse_args(argv)
     target = _destination(args.out)
     target.parent.mkdir(parents=True, exist_ok=True)
-    build_poster(str(target))
+    shutil.copyfile(SOURCE, target)
     print(f"wrote {target}")
     return 0
 
